@@ -71,9 +71,3 @@ print('CT:', round(CT,3))
 Cp_max = 0
 TSR_max = 0
 pitch_max = 0
-
-if (Cp_max < Cp_sum):
-    Cp_max = Cp_sum
-    TSR_max = TSR[i] 
-    pitch_max = pitch[j]
-
