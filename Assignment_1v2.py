@@ -60,7 +60,7 @@ def BEM(TSR,pitch,r,c,twist,thick,aoa_tab,cl_tab,cd_tab,cm_tab):
 
     while(delta > convergenceFactor and deltaPrime > convergenceFactor):
         count = count + 1
-        if (count > 10000):
+        if (count > 1e4):
             print("No convergence!")
             break
 
@@ -90,42 +90,52 @@ def BEM(TSR,pitch,r,c,twist,thick,aoa_tab,cl_tab,cd_tab,cm_tab):
         delta = abs(aprime - aprimeOld)
 
         deltaPrime = abs(aprime - aprimeOld)
-    Cp = (B*TSR*Ct*(1-a)**2/(2*m.pi*(m.sin(flowAngle))**2)*c/R)
-    return(Cp)
+
+    #Cp = (B*TSR*Ct*(1-a)**2/(2*m.pi*(m.sin(flowAngle))**2)*c/R)
+    Vrel = m.sqrt(Vo**2+(w*r)**2)
+
+    Pn = 0.5*rho*Vrel**2*c*Cn
+    Pt = 0.5*rho*Vrel**2*c*Ct
+
+    return(Pn, Pt)
 
 
 #Constants______________
 R = 89.17 #m
 B = 3
 rho = 1.225 #kg/m3
+Vo = 15
 
 #Interpolate over r, tip speed ratio and pitch
 TSR = np.arange(5,10+1,1)
 pitch = np.arange(-3,4+1,1)
 
 #Blade characteristics
-
+P_max = 0
 Cp_max = 0
 TSR_max = 0
 pitch_max = 0
 
 for i in range(len(TSR)):
+    w = TSR[i]*Vo/R
     for j in range(len(pitch)):
-        Cp_sum = 0
+        T = 0
+        P = 0
         for k in range(len(r_ref)):
-            Cp = BEM(TSR[i],pitch[j],r_ref[k],c_ref[k],beta_ref[k],tc_ref[k],aoa_tab,cl_tab,cd_tab,cm_tab)
-            Cp_sum += Cp
+            Pn, Pt = BEM(TSR[i],pitch[j],r_ref[k],c_ref[k],beta_ref[k],tc_ref[k],aoa_tab,cl_tab,cd_tab,cm_tab)
+            #integrate pt and pn to find T and P and derive CP P/1/2rhov2
+            T += B*Pn
+            P += w*B*Pt*r_ref[k]
 
-        if (Cp_max < Cp_sum):  
-            Cp_max = Cp_sum
+        Cp = P/(0.5*rho*Vo**3*m.pi*R**2)
+        Ct = T/(0.5*rho*Vo**2*m.pi*R**2)
+
+        if (Cp_max < Cp):  
+            Cp_max = Cp
+            P_max = P
             TSR_max = TSR[i]
             pitch_max = pitch[j]
 
-
-
-
-        print(Cp_sum, 'TSR = ',TSR[i], 'pitch = ', pitch[j])
+        #print(Cp, 'TSR = ',TSR[i], 'pitch = ', pitch[j])
         
-print('Best values \n', Cp_max,'TSR = ',TSR_max, 'pitch = ', pitch_max )
-
-#integrate pt and pn to find T and P and derive CP P/1/2rhov2
+print('Best values \n', round(Cp_max,6), 'Power(MW)= ', round(P_max/1e6,3),'TSR = ',TSR_max, 'pitch = ', pitch_max )
