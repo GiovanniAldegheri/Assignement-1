@@ -98,7 +98,7 @@ B = 3
 rho = 1.225 #kg/m3
 
 #Interpolate over r, tip speed ratio and pitch
-r = np.arange(1,R,1)
+r = r_ref
 TSR = np.arange(5,10+1,1)
 pitch = np.arange(-3,4+1,1)
 
