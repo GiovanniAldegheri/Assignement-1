@@ -27,6 +27,8 @@ c_ref = bladedat[2].tolist() #m
 beta_ref = bladedat[1].tolist() #deg
 tc_ref = bladedat[3].tolist() #%
 
+#Functions____________
+
 def force_coeffs(localalpha,thick,aoa_tab,cl_tab,cd_tab,cm_tab):
     cl_aoa=np.zeros([1,6])
     cd_aoa=np.zeros([1,6])
@@ -98,7 +100,6 @@ B = 3
 rho = 1.225 #kg/m3
 
 #Interpolate over r, tip speed ratio and pitch
-r = r_ref
 TSR = np.arange(5,10+1,1)
 pitch = np.arange(-3,4+1,1)
 
@@ -111,11 +112,8 @@ pitch_max = 0
 for i in range(len(TSR)):
     for j in range(len(pitch)):
         Cp_sum = 0
-        for k in range(len(r)):
-            c = np.interp(r[k],r_ref,c_ref)
-            twist = np.interp(r[k],r_ref,beta_ref)
-            thick = np.interp(r[k],r_ref,tc_ref)
-            Cp = BEM(TSR[i],pitch[j],r[k],c,twist,thick,aoa_tab,cl_tab,cd_tab,cm_tab)
+        for k in range(len(r_ref)):
+            Cp = BEM(TSR[i],pitch[j],r_ref[k],c_ref[k],beta_ref[k],tc_ref[k],aoa_tab,cl_tab,cd_tab,cm_tab)
             Cp_sum += Cp
 
         if (Cp_max < Cp_sum):  
