@@ -104,7 +104,7 @@ def BEM(TSR,pitch,r,c,twist,thick,aoa_tab,cl_tab,cd_tab,cm_tab):
 R = 89.17 #m
 B = 3
 rho = 1.225 #kg/m3
-Vo = 15
+Vo = 10
 
 #Interpolate over r, tip speed ratio and pitch
 TSR = np.arange(5,10+1,1)
@@ -121,11 +121,14 @@ for i in range(len(TSR)):
     for j in range(len(pitch)):
         T = 0
         P = 0
+        r_old = 0
         for k in range(len(r_ref)):
             Pn, Pt = BEM(TSR[i],pitch[j],r_ref[k],c_ref[k],beta_ref[k],tc_ref[k],aoa_tab,cl_tab,cd_tab,cm_tab)
             #integrate pt and pn to find T and P and derive CP P/1/2rhov2
-            T += B*Pn
-            P += w*B*Pt*r_ref[k]
+
+            T += B*Pn*(r_ref[k]-r_old)
+            P += w*B*Pt*r_ref[k]*(r_ref[k]-r_old)
+            r_old = r_ref[k]
 
         Cp = P/(0.5*rho*Vo**3*m.pi*R**2)
         Ct = T/(0.5*rho*Vo**2*m.pi*R**2)
@@ -136,6 +139,6 @@ for i in range(len(TSR)):
             TSR_max = TSR[i]
             pitch_max = pitch[j]
 
-        #print(Cp, 'TSR = ',TSR[i], 'pitch = ', pitch[j])
+        print(Cp, 'TSR = ',TSR[i], 'pitch = ', pitch[j])
         
 print('Best values \n', round(Cp_max,6), 'Power(MW)= ', round(P_max/1e6,3),'TSR = ',TSR_max, 'pitch = ', pitch_max )
