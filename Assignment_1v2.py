@@ -28,13 +28,35 @@ beta_ref = bladedat[1].tolist() #deg
 tc_ref = bladedat[3].tolist() #%
 
 #Functions____________
+def contourplots(pitch, TSR, Cp, Ct):
+    # Create a figure with two subplots
+    fig, axs = plt.subplots(1, 2, figsize=(12, 5))  # 1 row, 2 columns of subplots
+
+    # Subplot 1
+    axs[0].set_title(r'$C_p(\theta_p,\lambda)$ Contour Plot')
+    [X, Y] = np.meshgrid(pitch, TSR)
+    cont1 = axs[0].contourf(X, Y, Cp)
+    axs[0].set_xlabel(r'$\theta_p$')
+    axs[0].set_ylabel(r'$\lambda$')
+    cbar1 = plt.colorbar(cont1, ax=axs[0])
+    cbar1.set_label(r'$C_p$')
+
+    # Subplot 2
+    axs[1].set_title(r'$C_t(\theta_p,\lambda)$ Contour Plot')
+    [X, Y] = np.meshgrid(pitch, TSR)
+    cont2 = axs[1].contourf(X, Y, Ct)
+    axs[1].set_xlabel(r'$\theta_p$')
+    axs[1].set_ylabel(r'$\lambda$')
+    cbar2 = plt.colorbar(cont2, ax=axs[1])
+    cbar2.set_label(r'$C_t$')
+
+    plt.tight_layout()
 
 def force_coeffs(localalpha,thick,aoa_tab,cl_tab,cd_tab,cm_tab):
     cl_aoa=np.zeros([1,6])
     cd_aoa=np.zeros([1,6])
     cm_aoa=np.zeros([1,6])
     
-
     #Interpolate to current angle of attack:
     for i in range(np.size(files)):
         cl_aoa[0,i]=np.interp (localalpha,aoa_tab,cl_tab[:,i])
@@ -88,7 +110,6 @@ def BEM(TSR,pitch,r,c,twist,thick,aoa_tab,cl_tab,cd_tab,cm_tab):
         aprime = relax*aprimeStar + (1-relax)*aprimeOld
 
         delta = abs(aprime - aprimeOld)
-
         deltaPrime = abs(aprime - aprimeOld)
 
     #Cp = (B*TSR*Ct*(1-a)**2/(2*m.pi*(m.sin(flowAngle))**2)*c/R)
@@ -98,7 +119,6 @@ def BEM(TSR,pitch,r,c,twist,thick,aoa_tab,cl_tab,cd_tab,cm_tab):
     Pt = 0.5*rho*Vrel**2*c*Ct
 
     return(Pn, Pt)
-
 
 #Constants______________
 R = 89.17 #m
@@ -142,21 +162,9 @@ for i in range(len(TSR)):
             TSR_max = TSR[i]
             pitch_max = pitch[j]
 
-        print('Cp =',format(Cp[i,j],'.6f'), '\tTSR =',TSR[i], '\tpitch =', pitch[j])
-        
+        print('Cp =',format(Cp[i,j],'.6f'), '\tTSR =',TSR[i], '\tpitch =', pitch[j])       
 print('\nBest values', '\nCp =', format(Cp_max,'.6f'), '\tPower(MW) =', round(P_max/1e6,3), '\tTSR =',TSR_max, '\tpitch =', pitch_max,'\n')
 
-print(len(TSR),len(pitch),Cp.shape)
-
-
-plt.figure(1)
-[X, Y] = np.meshgrid(pitch, TSR)
-
-cont1 = plt.contourf(X, Y , Cp)
-plt.colorbar(cont1)
-
-plt.figure(2)
-[X, Y] = np.meshgrid(pitch, TSR)
-cont2 = plt.contourf(X, Y , Ct)
-plt.colorbar(cont2)
+#Plot the results in a countour plot
+contourplots(pitch, TSR, Cp, Ct)
 plt.show()
