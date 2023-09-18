@@ -104,7 +104,7 @@ def BEM(TSR,pitch,r,c,twist,thick,aoa_tab,cl_tab,cd_tab,cm_tab):
 R = 89.17 #m
 B = 3
 rho = 1.225 #kg/m3
-Vo = 10
+Vo = 50
 
 #Interpolate over r, tip speed ratio and pitch
 TSR = np.arange(5,10+1,1)
@@ -139,6 +139,6 @@ for i in range(len(TSR)):
             TSR_max = TSR[i]
             pitch_max = pitch[j]
 
-        print(round(Cp,6), 'TSR =',TSR[i], 'pitch =', pitch[j])
+        print('Cp =',format(Cp,'.6f'), '\tTSR =',TSR[i], '\tpitch =', pitch[j])
         
-print('Best values \n', 'Cp =', round(Cp_max,6), 'Power(MW) =', round(P_max/1e6,3),'TSR =',TSR_max, 'pitch =', pitch_max )
+print('\nBest values', '\nCp =', format(Cp_max,'.6f'), '\tPower(MW) =', round(P_max/1e6,3), '\tTSR =',TSR_max, '\tpitch =', pitch_max,'\n')
