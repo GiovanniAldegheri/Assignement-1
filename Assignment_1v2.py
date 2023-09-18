@@ -139,6 +139,6 @@ for i in range(len(TSR)):
             TSR_max = TSR[i]
             pitch_max = pitch[j]
 
-        print(Cp, 'TSR = ',TSR[i], 'pitch = ', pitch[j])
+        print(round(Cp,6), 'TSR =',TSR[i], 'pitch =', pitch[j])
         
-print('Best values \n', round(Cp_max,6), 'Power(MW)= ', round(P_max/1e6,3),'TSR = ',TSR_max, 'pitch = ', pitch_max )
+print('Best values \n', 'Cp =', round(Cp_max,6), 'Power(MW) =', round(P_max/1e6,3),'TSR =',TSR_max, 'pitch =', pitch_max )
