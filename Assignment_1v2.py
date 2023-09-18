@@ -146,6 +146,17 @@ for i in range(len(TSR)):
         
 print('\nBest values', '\nCp =', format(Cp_max,'.6f'), '\tPower(MW) =', round(P_max/1e6,3), '\tTSR =',TSR_max, '\tpitch =', pitch_max,'\n')
 
-# plt.figure(1)
-# plt.contour([TSR,pitch], Cp)
-# plt.show()
+print(len(TSR),len(pitch),Cp.shape)
+
+
+plt.figure(1)
+[X, Y] = np.meshgrid(pitch, TSR)
+
+cont1 = plt.contourf(X, Y , Cp)
+plt.colorbar(cont1)
+
+plt.figure(2)
+[X, Y] = np.meshgrid(pitch, TSR)
+cont2 = plt.contourf(X, Y , Ct)
+plt.colorbar(cont2)
+plt.show()
