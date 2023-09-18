@@ -36,8 +36,8 @@ def contourplots(pitch, TSR, Cp, Ct):
     axs[0].set_title(r'$C_p(\theta_p,\lambda)$ Contour Plot')
     [X, Y] = np.meshgrid(pitch, TSR)
     cont1 = axs[0].contourf(X, Y, Cp)
-    axs[0].set_xlabel(r'$\theta_p$')
-    axs[0].set_ylabel(r'$\lambda$')
+    axs[0].set_xlabel(r'$\theta_p$ (deg)')
+    axs[0].set_ylabel(r'$\lambda$ (-)')
     cbar1 = plt.colorbar(cont1, ax=axs[0])
     cbar1.set_label(r'$C_p$')
 
@@ -45,8 +45,8 @@ def contourplots(pitch, TSR, Cp, Ct):
     axs[1].set_title(r'$C_t(\theta_p,\lambda)$ Contour Plot')
     [X, Y] = np.meshgrid(pitch, TSR)
     cont2 = axs[1].contourf(X, Y, Ct)
-    axs[1].set_xlabel(r'$\theta_p$')
-    axs[1].set_ylabel(r'$\lambda$')
+    axs[1].set_xlabel(r'$\theta_p$ (deg)')
+    axs[1].set_ylabel(r'$\lambda$ (-)')
     cbar2 = plt.colorbar(cont2, ax=axs[1])
     cbar2.set_label(r'$C_t$')
 
