@@ -100,17 +100,17 @@ def BEM(TSR,pitch,r,c,twist,thick,aoa_tab,cl_tab,cd_tab,cm_tab):
         aold = a
         aprimeOld  = aprime
 
-        if(aold > 0.2):
+        if(aold > 0.33):
+                aStar = CT/(4*F*(1-1/4*(5-3*aold)*aold))
+                a = relax*aStar + (1-relax)*aold
+        elif(aold > 0.2):
             K = 4*F*(m.sin(flowAngle))**2/(solidity*Cn)
             a = 1+K/2*(1-2*0.2)-0.5*np.sqrt((K*(1-2*0.2)+2)**2+4*(K*0.2**2-1))  
-
-        elif(aold < 0.33):
+        else:
             a = solidity*Cn/4/F/(m.sin(flowAngle))**2*(1-aold)
             aprime = solidity*Ct/4/F/m.sin(flowAngle)/m.cos(flowAngle)*(1+aprimeOld)
-        else:
-            aStar = CT/(4*F*(1-1/4*(5-3*aold)*aold))
-            a = relax*aStar + (1-relax)*aold
-
+        
+            
         aprimeStar = (solidity*Ct*(1+aprimeOld))/(4*F*m.sin(flowAngle)*m.cos(flowAngle))
         aprime = relax*aprimeStar + (1-relax)*aprimeOld
 
@@ -133,8 +133,8 @@ rho = 1.225 #kg/m3
 Vo = 10
 
 #Interpolate over r, tip speed ratio and pitch
-TSR = np.arange(5,10+1,1)
-pitch = np.arange(-3,4+1,1)
+TSR = np.arange(5,10+1,0.5)
+pitch = np.arange(-3,4+1,0.5)
 
 #Blade characteristics
 P_max = 0
