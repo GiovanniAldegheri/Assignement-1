@@ -35,7 +35,7 @@ def contourplots(pitch, TSR, Cp):
     # Subplot 1
     axs[0].set_title(r'$C_p(Chord,Twist)$ Contour Plot')
     [X, Y] = np.meshgrid(TSR, pitch)
-    cont1 = axs[0].contourf(Y, X, Cp)
+    cont1 = axs[0].contourf(Y, X, Cp, 60, cmap="turbo")
     axs[0].set_ylabel(r'Twist (deg)')
     axs[0].set_xlabel(r'Chord (m)')
     cbar1 = plt.colorbar(cont1, ax=axs[0])
@@ -135,8 +135,8 @@ pitch_fixed = 0
 Cp_max = 0
 c_max = 0
 beta_max = 0
-beta = np.arange(-1.11-7,-1.11+7,0.5)
-c = np.arange(0,7,0.5)
+beta = np.arange(-1.11-7,-1.11+3,0.5)
+c = np.arange(1,4,0.2)
 
 Cp=np.zeros([len(c),len(beta)])
 
@@ -146,7 +146,8 @@ for i in range(len(c)):
     for j in range(len(beta)):
 
         Cp[i, j] = BEM(TSR,pitch_fixed,r_ref[9],c[i],beta[j],tc_ref[9],aoa_tab,cl_tab,cd_tab,cm_tab)
-
+        if Cp[i, j] < 0:
+            Cp[i, j] = 0
 
 
         if (Cp_max < Cp[i,j]):  
