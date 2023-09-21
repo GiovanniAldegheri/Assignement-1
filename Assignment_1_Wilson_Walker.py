@@ -148,17 +148,16 @@ Ct=np.zeros([len(TSR),len(pitch)])
 for i in range(len(TSR)):
     w = TSR[i]*Vo/R
     for j in range(len(pitch)):
-        T = 0
-        P = 0
-        r_old = 0
+        Pn_lst = []
+        Pt_lst = []
         for k in range(len(r_ref)):
             Pn, Pt = BEM(TSR[i],pitch[j],r_ref[k],c_ref[k],beta_ref[k],tc_ref[k],aoa_tab,cl_tab,cd_tab,cm_tab)
-            #integrate pt and pn to find T and P and derive CP P/1/2rhov2
-            T += B*Pn*(r_ref[k]-r_old)
-            P += w*B*Pt*r_ref[k]*(r_ref[k]-r_old)
-            r_old = r_ref[k]
+            Pn_lst.append(Pn)
+            Pt_lst.append(Pt*r_ref[k])
 
-        
+        T = np.trapz(Pn_lst,r_ref)*B
+        P = np.trapz(Pt_lst,r_ref)*w*B
+
         Cp[i,j] = P/(0.5*rho*Vo**3*m.pi*R**2)
         Ct[i,j] = T/(0.5*rho*Vo**2*m.pi*R**2)
 
