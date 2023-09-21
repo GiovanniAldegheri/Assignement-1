@@ -28,13 +28,13 @@ beta_ref = bladedat[1].tolist() #deg
 tc_ref = bladedat[3].tolist() #%
 
 #Functions____________
-def contourplots(pitch, TSR, Cp, Ct):
+def contourplots(pitch, TSR, Cp):
     # Create a figure with two subplots
     fig, axs = plt.subplots(1, 2, figsize=(12, 5))  # 1 row, 2 columns of subplots
 
     # Subplot 1
     axs[0].set_title(r'$C_p(\lambda,\theta_p)$ Contour Plot')
-    [X, Y] = np.meshgrid(pitch, TSR)
+    [X, Y] = np.meshgrid(TSR, pitch)
     cont1 = axs[0].contourf(Y, X, Cp)
     axs[0].set_ylabel(r'$\theta_p$ (deg)')
     axs[0].set_xlabel(r'$\lambda$ (-)')
@@ -42,13 +42,13 @@ def contourplots(pitch, TSR, Cp, Ct):
     cbar1.set_label(r'$C_p$')
 
     # Subplot 2
-    axs[1].set_title(r'$C_t(\lambda,\theta_p)$ Contour Plot')
-    [X, Y] = np.meshgrid(pitch, TSR)
-    cont2 = axs[1].contourf(Y, X, Ct)
-    axs[1].set_ylabel(r'$\theta_p$ (deg)')
-    axs[1].set_xlabel(r'$\lambda$ (-)')
-    cbar2 = plt.colorbar(cont2, ax=axs[1])
-    cbar2.set_label(r'$C_t$')
+    # axs[1].set_title(r'$C_t(\lambda,\theta_p)$ Contour Plot')
+    # [X, Y] = np.meshgrid(pitch, TSR)
+    # cont2 = axs[1].contourf(Y, X, Ct)
+    # axs[1].set_ylabel(r'$\theta_p$ (deg)')
+    # axs[1].set_xlabel(r'$\lambda$ (-)')
+    # cbar2 = plt.colorbar(cont2, ax=axs[1])
+    # cbar2.set_label(r'$C_t$')
 
     plt.tight_layout()
 
@@ -72,7 +72,7 @@ def force_coeffs(localalpha,thick,aoa_tab,cl_tab,cd_tab,cm_tab):
 def BEM(TSR,pitch,r,c,twist,thick,aoa_tab,cl_tab,cd_tab,cm_tab):
     a = 0
     aprime = 0
-    convergenceFactor = 1e-10
+    convergenceFactor = (1e-10)
     delta = 1
     deltaPrime = 1
 
@@ -112,57 +112,53 @@ def BEM(TSR,pitch,r,c,twist,thick,aoa_tab,cl_tab,cd_tab,cm_tab):
         delta = abs(aprime - aprimeOld)
         deltaPrime = abs(aprime - aprimeOld)
 
-    Vrel = m.sqrt(Vo**2+(w*r)**2)
+    # Vrel = m.sqrt(Vo**2+(w*r)**2)
 
-    Pn = 0.5*rho*Vrel**2*c*Cn
-    Pt = 0.5*rho*Vrel**2*c*Ct
+    # Pn = 0.5*rho*Vrel**2*c*Cn
+    # Pt = 0.5*rho*Vrel**2*c*Ct
 
-    return(Pn, Pt)
+    Cp = TSR*B*(1-a)**2*Ct*c/(2*m.pi*(m.sin(flowAngle))**2*R)
+
+    return(Cp)
 
 #Constants______________
 R = 89.17 #m
 B = 3
 rho = 1.225 #kg/m3
 Vo = 10
+r = 71.97
 
 #Interpolate over r, tip speed ratio and pitch
-TSR = np.arange(5,10+1,1)
-pitch = np.arange(-3,4+1,1)
-
+TSR = 8
+pitch_fixed = 0
 #Blade characteristics
 P_max = 0
 Cp_max = 0
 TSR_max = 0
 pitch_max = 0
+beta = np.arange(-1.11-3,-1.11+3,0.1)
+c = np.arange(0,3.1,0.1)
 
-Cp=np.zeros([len(TSR),len(pitch)])
-Ct=np.zeros([len(TSR),len(pitch)])
+Cp=np.zeros([len(c),len(beta)])
 
-for i in range(len(TSR)):
-    w = TSR[i]*Vo/R
-    for j in range(len(pitch)):
-        Pn_lst = []
-        Pt_lst = []
-        for k in range(len(r_ref)):
-            Pn, Pt = BEM(TSR[i],pitch[j],r_ref[k],c_ref[k],beta_ref[k],tc_ref[k],aoa_tab,cl_tab,cd_tab,cm_tab)
-            Pn_lst.append(Pn)
-            Pt_lst.append(Pt*r_ref[k])
+w = TSR*Vo/R
 
-        T = np.trapz(Pn_lst,r_ref)*B
-        P = np.trapz(Pt_lst,r_ref)*w*B
+for i in range(len(c)):
+    for j in range(len(beta)):
 
-        Cp[i,j] = P/(0.5*rho*Vo**3*m.pi*R**2)
-        Ct[i,j] = T/(0.5*rho*Vo**2*m.pi*R**2)
+        Cp[i, j] = BEM(TSR,pitch_fixed,r_ref[9],c[i],beta[j],tc_ref[9],aoa_tab,cl_tab,cd_tab,cm_tab)
 
-        if (Cp_max < Cp[i,j]):  
-            Cp_max = Cp[i,j]
-            P_max = P
-            TSR_max = TSR[i]
-            pitch_max = pitch[j]
 
-        print('Cp =',format(Cp[i,j],'.6f'), '\tTSR =',TSR[i], '\tpitch =', pitch[j])       
+
+        # if (Cp_max < Cp[i,j]):  
+        #     Cp_max = Cp[i,j]
+
+        #     TSR_max = TSR[i]
+        #     pitch_max = pitch[j]
+
+        # print('Cp =',format(Cp[i],'.6f'), '\tTSR =',TSR[i], '\tpitch =', pitch[j])       
 print('\nBest values', '\nCp =', format(Cp_max,'.6f'), '\tPower(MW) =', round(P_max/1e6,3), '\tTSR =',TSR_max, '\tpitch =', pitch_max,'\n')
 
 #Plot the results in a countour plot
-contourplots(pitch, TSR, Cp, Ct)
+contourplots(c, beta, Cp)
 plt.show()
