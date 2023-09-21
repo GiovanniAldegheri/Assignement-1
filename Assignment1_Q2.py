@@ -33,11 +33,11 @@ def contourplots(pitch, TSR, Cp):
     fig, axs = plt.subplots(1, 2, figsize=(12, 5))  # 1 row, 2 columns of subplots
 
     # Subplot 1
-    axs[0].set_title(r'$C_p(\lambda,\theta_p)$ Contour Plot')
+    axs[0].set_title(r'$C_p(Chord,Twist)$ Contour Plot')
     [X, Y] = np.meshgrid(TSR, pitch)
     cont1 = axs[0].contourf(Y, X, Cp)
-    axs[0].set_ylabel(r'$\theta_p$ (deg)')
-    axs[0].set_xlabel(r'$\lambda$ (-)')
+    axs[0].set_ylabel(r'Twist (deg)')
+    axs[0].set_xlabel(r'Chord (m)')
     cbar1 = plt.colorbar(cont1, ax=axs[0])
     cbar1.set_label(r'$C_p$')
 
@@ -132,12 +132,11 @@ r = 71.97
 TSR = 8
 pitch_fixed = 0
 #Blade characteristics
-P_max = 0
 Cp_max = 0
-TSR_max = 0
-pitch_max = 0
-beta = np.arange(-1.11-3,-1.11+3,0.1)
-c = np.arange(0,3.1,0.1)
+c_max = 0
+beta_max = 0
+beta = np.arange(-1.11-7,-1.11+7,0.5)
+c = np.arange(0,7,0.5)
 
 Cp=np.zeros([len(c),len(beta)])
 
@@ -150,14 +149,13 @@ for i in range(len(c)):
 
 
 
-        # if (Cp_max < Cp[i,j]):  
-        #     Cp_max = Cp[i,j]
+        if (Cp_max < Cp[i,j]):  
+            Cp_max = Cp[i,j]
+            c_max = c[i]
+            beta_max = beta[j]
 
-        #     TSR_max = TSR[i]
-        #     pitch_max = pitch[j]
-
-        # print('Cp =',format(Cp[i],'.6f'), '\tTSR =',TSR[i], '\tpitch =', pitch[j])       
-print('\nBest values', '\nCp =', format(Cp_max,'.6f'), '\tPower(MW) =', round(P_max/1e6,3), '\tTSR =',TSR_max, '\tpitch =', pitch_max,'\n')
+        print('Cp =',format(Cp[i, j],'.6f'), '\tc =',c[i], '\tbeta =', beta[j])
+print('\nBest values', '\nCp =', format(Cp_max,'.6f'), '\tChord =', round(c_max,1), '\tTwist =', round(beta_max,2), '\n')
 
 #Plot the results in a countour plot
 contourplots(c, beta, Cp)
