@@ -29,28 +29,13 @@ tc_ref = bladedat[3].tolist() #%
 
 #Functions____________
 def contourplots(pitch, TSR, Cp):
-    # Create a figure with two subplots
-    fig, axs = plt.subplots(1, 2, figsize=(12, 5))  # 1 row, 2 columns of subplots
-
-    # Subplot 1
-    axs[0].set_title(r'$C_p(Chord,Twist)$ Contour Plot')
+    plt.title(r'$C_p(c,\beta)$ Contour Plot')
     [X, Y] = np.meshgrid(TSR, pitch)
-    cont1 = axs[0].contourf(Y, X, Cp, 60, cmap="turbo")
-    axs[0].set_ylabel(r'Twist (deg)')
-    axs[0].set_xlabel(r'Chord (m)')
-    cbar1 = plt.colorbar(cont1, ax=axs[0])
+    cont1 = plt.contourf(Y, X, Cp, 60, cmap="turbo")
+    plt.ylabel(r'Twist (deg)')
+    plt.xlabel(r'Chord (m)')
+    cbar1 = plt.colorbar(cont1)
     cbar1.set_label(r'$C_p$')
-
-    # Subplot 2
-    # axs[1].set_title(r'$C_t(\lambda,\theta_p)$ Contour Plot')
-    # [X, Y] = np.meshgrid(pitch, TSR)
-    # cont2 = axs[1].contourf(Y, X, Ct)
-    # axs[1].set_ylabel(r'$\theta_p$ (deg)')
-    # axs[1].set_xlabel(r'$\lambda$ (-)')
-    # cbar2 = plt.colorbar(cont2, ax=axs[1])
-    # cbar2.set_label(r'$C_t$')
-
-    plt.tight_layout()
 
 def force_coeffs(localalpha,thick,aoa_tab,cl_tab,cd_tab,cm_tab):
     cl_aoa=np.zeros([1,6])
