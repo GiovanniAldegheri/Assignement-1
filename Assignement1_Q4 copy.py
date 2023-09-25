@@ -42,15 +42,13 @@ r_ref.pop()
 
 #PLOTS
 
-def simple_graph(n,x,y,x_label,y_label):
-    n += 1
-    plt.figure(n)
+def simple_graph(x,y,x_label,y_label):
+    plt.figure()
     plt.plot(x, y)
     plt.title((y_label + '(' + x_label + ')'))
     plt.xlabel(x_label)
     plt.ylabel(y_label)
-    return n
-    
+
 
 def contourplots(x,y,a,x_label,y_label,a_label):
     axs, fig = plt.subplot(1, 1, figsize=(5, 5))
@@ -138,7 +136,6 @@ def BEM(Vo,TSR,pitch,r,c,twist,thick,aoa_tab,cl_tab,cd_tab,cm_tab):
 Vo = np.arange(5,25+1,1)
 pitch = 0
 pitch_delta = 0.1
-n = 0
 
 #Results_____________
 P_lst = np.zeros([len(Vo)])
@@ -182,9 +179,9 @@ for i in range(len(Vo)):
 # for i in range(len(Vo)):
 #     print(Vo[i], pitch_lst[i], P_lst[i]/1e6)
 
-n = simple_graph(n, Vo, pitch_lst, 'Vo', 'Pitch')
-n = simple_graph(n, Vo, P_lst, 'Vo', 'Power')
-n = simple_graph(n, Vo, T_lst, 'Vo', 'Thrust')
-n = simple_graph(n, Vo, Cp_lst, 'Vo', 'Cp')
-n = simple_graph(n, Vo, Ct_lst, 'Vo', 'Ct')
+simple_graph(Vo, pitch_lst, 'Vo', 'Pitch')
+simple_graph(Vo, P_lst, 'Vo', 'Power')
+simple_graph(Vo, T_lst, 'Vo', 'Thrust')
+simple_graph(Vo, Cp_lst, 'Vo', 'Cp')
+simple_graph(Vo, Ct_lst, 'Vo', 'Ct')
 plt.show()
