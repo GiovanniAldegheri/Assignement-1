@@ -36,6 +36,8 @@ c_ref = bladedat[2].tolist() #m
 beta_ref = bladedat[1].tolist() #deg
 tc_ref = bladedat[3].tolist() #%
 
+r_ref.pop()
+
 #FUNCTIONS------------------------------------------------------------
 
 #PLOTS
@@ -83,7 +85,7 @@ def force_coeffs(localalpha,thick,aoa_tab,cl_tab,cd_tab,cm_tab):
 def BEM(Vo,TSR,pitch,r,c,twist,thick,aoa_tab,cl_tab,cd_tab,cm_tab):
     a = 0
     aprime = 0
-    convergenceFactor = 1e-6
+    convergenceFactor = 1e-10
     delta = 1
     deltaPrime = 1
 
@@ -93,7 +95,7 @@ def BEM(Vo,TSR,pitch,r,c,twist,thick,aoa_tab,cl_tab,cd_tab,cm_tab):
 
     while(delta > convergenceFactor and deltaPrime > convergenceFactor):
         count = count + 1
-        if (count > 1e3):
+        if (count > 1e4):
             print("No convergence!")
             break
 
@@ -177,11 +179,12 @@ for i in range(len(Vo)):
     Cp_lst[i] = P/(0.5*rho*Vo[i]**3*m.pi*R**2)
     Ct_lst[i] = T/(0.5*rho*Vo[i]**2*m.pi*R**2)
 
-for i in range(len(Vo)):
-    print(Vo[i], pitch_lst[i], P_lst[i]/1e6)
+# for i in range(len(Vo)):
+#     print(Vo[i], pitch_lst[i], P_lst[i]/1e6)
 
 n = simple_graph(n, Vo, pitch_lst, 'Vo', 'Pitch')
 n = simple_graph(n, Vo, P_lst, 'Vo', 'Power')
+n = simple_graph(n, Vo, T_lst, 'Vo', 'Thrust')
 n = simple_graph(n, Vo, Cp_lst, 'Vo', 'Cp')
 n = simple_graph(n, Vo, Ct_lst, 'Vo', 'Ct')
 plt.show()
