@@ -1,18 +1,16 @@
 import math as m
 import numpy as np
-import matplotlib.pyplot as plt
 import pandas as pd
+import matplotlib.pyplot as plt
 
-Cp_max = 0.469
-rou = 1.225
-R = 89.17
-area = m.pi*R**2
-P = 10.64e6
-TSR = []
-cut_in = 4
-cut_out = 25
-Vo_rat = 11.403
-w_max = 1.023
+#CONSTANTS----------------------------------------
+R = 89.17 #m
+B = 3
+rho = 1.225 #kg/m3
+TSR_opt = 8
+P_max = 10.64e6
+
+#READING FILES--------------------------------------------------------------------
 
 files=['FFA-W3-241.txt','FFA-W3-301.txt','FFA-W3-360.txt','FFA-W3-480.txt','FFA-W3-600.txt','cylinder.txt']
 #Initializing tables    
@@ -38,30 +36,30 @@ c_ref = bladedat[2].tolist() #m
 beta_ref = bladedat[1].tolist() #deg
 tc_ref = bladedat[3].tolist() #%
 
-#Functions____________
-def contourplots(pitch, TSR, Cp, Ct):
-    # Create a figure with two subplots
-    fig, axs = plt.subplots(1, 2, figsize=(12, 5))  # 1 row, 2 columns of subplots
+#FUNCTIONS------------------------------------------------------------
 
-    # Subplot 1
-    axs[0].set_title(r'$C_p(\lambda,\theta_p)$ Contour Plot')
-    [X, Y] = np.meshgrid(pitch, TSR)
-    cont1 = axs[0].contourf(Y, X, Cp, 60, cmap="turbo")
-    axs[0].set_ylabel('Pitch angle (deg)')
-    axs[0].set_xlabel('Tip speed ratio (-)')
+#PLOTS
+
+def simple_graph(n,x,y,x_label,y_label):
+    n += 1
+    plt.figure(n)
+    plt.plot(x, y)
+    plt.xlabel(x_label)
+    plt.ylabel(y_label)
+    return n
+    
+
+def contourplots(x,y,a,x_label,y_label,a_label):
+    axs, fig = plt.subplot(1, 1, figsize=(5, 5))
+    axs.set_title(r'Contour Plot')
+    [X, Y] = np.meshgrid(x, y)
+    cont1 = axs.contourf(X, Y, a, 60, cmap="turbo")
+    axs.set_xlabel(x_label)
+    axs.set_ylabel(y_label)
     cbar1 = plt.colorbar(cont1, ax=axs[0])
-    cbar1.set_label(r'$C_p$')
-
-    # Subplot 2
-    axs[1].set_title(r'$C_t(\lambda,\theta_p)$ Contour Plot')
-    [X, Y] = np.meshgrid(pitch, TSR)
-    cont2 = axs[1].contourf(Y, X, Ct, 60, cmap="turbo")
-    axs[1].set_ylabel('Pitch angle (deg)')
-    axs[1].set_xlabel('Tip speed ratio (-)')
-    cbar2 = plt.colorbar(cont2, ax=axs[1])
-    cbar2.set_label(r'$C_t$')
-
+    cbar1.set_label(a_label)
     plt.tight_layout()
+
 
 def force_coeffs(localalpha,thick,aoa_tab,cl_tab,cd_tab,cm_tab):
     cl_aoa=np.zeros([1,6])
@@ -80,10 +78,11 @@ def force_coeffs(localalpha,thick,aoa_tab,cl_tab,cd_tab,cm_tab):
     Cm=np.interp (thick,thick_prof,cm_aoa[0,:])
     return Cl, Cd, Cm 
 
+
 def BEM(Vo,TSR,pitch,r,c,twist,thick,aoa_tab,cl_tab,cd_tab,cm_tab):
     a = 0
     aprime = 0
-    convergenceFactor = 1e-10
+    convergenceFactor = 1e-6
     delta = 1
     deltaPrime = 1
 
@@ -93,7 +92,7 @@ def BEM(Vo,TSR,pitch,r,c,twist,thick,aoa_tab,cl_tab,cd_tab,cm_tab):
 
     while(delta > convergenceFactor and deltaPrime > convergenceFactor):
         count = count + 1
-        if (count > 1e4):
+        if (count > 1e3):
             print("No convergence!")
             break
 
@@ -123,80 +122,64 @@ def BEM(Vo,TSR,pitch,r,c,twist,thick,aoa_tab,cl_tab,cd_tab,cm_tab):
         delta = abs(aprime - aprimeOld)
         deltaPrime = abs(aprime - aprimeOld)
 
+    w = TSR*Vo/R
     Vrel = m.sqrt(Vo**2+(w*r)**2)
-    
+
     Pn = 0.5*rho*Vrel**2*c*Cn
     Pt = 0.5*rho*Vrel**2*c*Ct
-    # print(Pn)
 
     return(Pn, Pt)
 
-#Constants______________
-R = 89.17 #m
-B = 3
-rho = 1.225 #kg/m3
 
-#Interpolate over r, tip speed ratio and pitch
-Vo = np.arange(5,30+1,1)
-#pitch = np.arange(-3,4+1,1)
+#Variables__________
+Vo = np.arange(5,25+1,1)
 pitch = 0
+n = 0
 
-#Blade characteristics
-P_max = 0
-Cp_max = 0
-TSR_max = 0
-pitch_max = 0
-TSR_opt = 8
-deltaP = 10000
+#Results_____________
+P_lst = np.zeros([len(Vo)])
+T_lst = np.zeros([len(Vo)])
+Cp_lst = np.zeros([len(Vo)])
+Ct_lst = np.zeros([len(Vo)])
+pitch_lst = np.zeros([len(Vo)])
 
-Cp=np.zeros([len(Vo)])
-Ct=np.zeros([len(Vo)])
-P = np.zeros([len(Vo)])
-T = np.zeros([len(Vo)])
-
+#MAIN-----------------------------------------------------------------
 
 for i in range(len(Vo)):
     w = TSR_opt*Vo[i]/R
     if w > 1.023:
         w = 1.023
-
     TSR = w*R/Vo[i]
-    # TSR = 8
-    while P[i] > 10.64e6:
-        
+    P = P_max+1
+    T = 0
+    pitch -= 0.2
+    print('Vo =',Vo[i], 'w =', w)
+
+    while P > P_max and pitch < 90:
+        pitch += 0.2
         Pn_lst = []
         Pt_lst = []
-        for k in range(len(r_ref)):
-            Pn, Pt = BEM(Vo[i],TSR,pitch,r_ref[k],c_ref[k],beta_ref[k],tc_ref[k],aoa_tab,cl_tab,cd_tab,cm_tab)
+
+        for j in range(len(r_ref)):
+            Pn, Pt = BEM(Vo[i],TSR,pitch,r_ref[j],c_ref[j],beta_ref[j],tc_ref[j],aoa_tab,cl_tab,cd_tab,cm_tab)
             Pn_lst.append(Pn)
-            Pt_lst.append(Pt*r_ref[k])
+            Pt_lst.append(Pt*r_ref[j])
 
+        T = np.trapz(Pn_lst,r_ref)*B
+        P = np.trapz(Pt_lst,r_ref)*w*B
+        print(pitch, P)
 
-        T[i] = np.trapz(Pn_lst,r_ref)*B
-        P[i] = np.trapz(Pt_lst,r_ref)*w*B
-        # print(P[i])
-        # print(TSR)
+    pitch_lst[i] = pitch
+    P_lst[i] = P
+    T_lst[i] = T
+    Cp_lst[i] = P/(0.5*rho*Vo[i]**3*m.pi*R**2)
+    Ct_lst[i] = T/(0.5*rho*Vo[i]**2*m.pi*R**2)
 
-        deltaP = P[i] - 10.64e6
-        
+for i in range(len(Vo)):
+    print(Vo[i], pitch_lst[i], P_lst[i]/1e6)
 
-        Cp[i] = P[i]/(0.5*rho*Vo[i]**3*m.pi*R**2)
-        Ct[i] = T[i]/(0.5*rho*Vo[i]**2*m.pi*R**2)
-
-#         if (Cp_max < Cp[i,j]):  
-#             Cp_max = Cp[i,j]
-#             P_max = P
-#             TSR_max = 8
-#             pitch_max = pitch[j]
-
-#         print('Cp =',format(Cp[i,j],'.6f'), '\tTSR =',TSR[i], '\tpitch =', pitch[j])       
-# print('\nBest values', '\nCp =', format(Cp_max,'.6f'), '\tPower(MW) =', round(P_max/1e6,3), '\tTSR =',TSR_max, '\tpitch =', pitch_max,'\n')
-
-#Plot the results in a countour plot
-# contourplots(pitch, TSR, Cp, Ct)
-# plt.show()
-
-plt.plot(Vo, P)
-plt.xlabel('Vo(m/s)')
-plt.ylabel('P(W)')
+n = simple_graph(n, Vo, pitch_lst, 'Vo', 'pitch')
+n = simple_graph(n, Vo, P_lst, 'Vo', 'Power')
+n = simple_graph(n, Vo, Cp_lst, 'Vo', 'Cp')
+n = simple_graph(n, Vo, Ct_lst, 'Vo', 'Ct')
 plt.show()
