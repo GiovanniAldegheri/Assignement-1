@@ -44,6 +44,7 @@ def simple_graph(n,x,y,x_label,y_label):
     n += 1
     plt.figure(n)
     plt.plot(x, y)
+    plt.title((y_label + '(' + x_label + ')'))
     plt.xlabel(x_label)
     plt.ylabel(y_label)
     return n
@@ -134,6 +135,7 @@ def BEM(Vo,TSR,pitch,r,c,twist,thick,aoa_tab,cl_tab,cd_tab,cm_tab):
 #Variables__________
 Vo = np.arange(5,25+1,1)
 pitch = 0
+pitch_delta = 0.1
 n = 0
 
 #Results_____________
@@ -152,11 +154,11 @@ for i in range(len(Vo)):
     TSR = w*R/Vo[i]
     P = P_max+1
     T = 0
-    pitch -= 0.2
+    pitch -= pitch_delta
     print('Vo =',Vo[i], 'w =', w)
 
     while P > P_max and pitch < 90:
-        pitch += 0.2
+        pitch += pitch_delta
         Pn_lst = []
         Pt_lst = []
 
@@ -178,7 +180,7 @@ for i in range(len(Vo)):
 for i in range(len(Vo)):
     print(Vo[i], pitch_lst[i], P_lst[i]/1e6)
 
-n = simple_graph(n, Vo, pitch_lst, 'Vo', 'pitch')
+n = simple_graph(n, Vo, pitch_lst, 'Vo', 'Pitch')
 n = simple_graph(n, Vo, P_lst, 'Vo', 'Power')
 n = simple_graph(n, Vo, Cp_lst, 'Vo', 'Cp')
 n = simple_graph(n, Vo, Ct_lst, 'Vo', 'Ct')
