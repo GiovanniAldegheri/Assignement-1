@@ -171,7 +171,7 @@ for i in range(len(Vo)):
 
         T = np.trapz(Pn_lst,r_ref)*B
         P = np.trapz(Pt_lst,r_ref)*w*B
-        print(pitch, P)
+        print('\t',round(pitch,1), round(P/1e6,2))
 
     pitch_lst[i] = pitch
     P_lst[i] = P
