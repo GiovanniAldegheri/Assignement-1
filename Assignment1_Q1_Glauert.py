@@ -35,18 +35,18 @@ def contourplots(pitch, TSR, Cp, Ct):
     # Subplot 1
     axs[0].set_title(r'$C_p(\lambda,\theta_p)$ Contour Plot')
     [X, Y] = np.meshgrid(pitch, TSR)
-    cont1 = axs[0].contourf(Y, X, Cp)
-    axs[0].set_ylabel(r'$\theta_p$ (deg)')
-    axs[0].set_xlabel(r'$\lambda$ (-)')
+    cont1 = axs[0].contourf(Y, X, Cp, 60, cmap="turbo")
+    axs[0].set_ylabel('Pitch angle (deg)')
+    axs[0].set_xlabel('Tip speed ratio (-)')
     cbar1 = plt.colorbar(cont1, ax=axs[0])
     cbar1.set_label(r'$C_p$')
 
     # Subplot 2
     axs[1].set_title(r'$C_t(\lambda,\theta_p)$ Contour Plot')
     [X, Y] = np.meshgrid(pitch, TSR)
-    cont2 = axs[1].contourf(Y, X, Ct)
-    axs[1].set_ylabel(r'$\theta_p$ (deg)')
-    axs[1].set_xlabel(r'$\lambda$ (-)')
+    cont2 = axs[1].contourf(Y, X, Ct, 60, cmap="turbo")
+    axs[1].set_ylabel('Pitch angle (deg)')
+    axs[1].set_xlabel('Tip speed ratio (-)')
     cbar2 = plt.colorbar(cont2, ax=axs[1])
     cbar2.set_label(r'$C_t$')
 
