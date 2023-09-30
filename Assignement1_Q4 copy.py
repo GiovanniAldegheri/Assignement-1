@@ -180,7 +180,7 @@ for i in range(len(Vo)):
 #     print(Vo[i], pitch_lst[i], P_lst[i]/1e6)
 
 for i in range(len(Vo)):
-    print('Vo(m/s) =', Vo[i], 'T(kN) =', format(T_lst[i]/1000,'.3f'))
+    print('Vo(m/s) =', Vo[i], 'T(kN) =', round(T_lst[i],0), 'Pitch =', round(pitch_lst[i],1))
 
 simple_graph(Vo, pitch_lst, 'Vo', 'Pitch')
 simple_graph(Vo, P_lst, 'Vo', 'Power')
