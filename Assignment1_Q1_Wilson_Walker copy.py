@@ -71,7 +71,7 @@ def force_coeffs(localalpha,thick,aoa_tab,cl_tab,cd_tab,cm_tab):
     Cm=np.interp (thick,thick_prof,cm_aoa[0,:])
     return Cl, Cd, Cm 
 
-def BEM(TSR,pitch,r,c,twist,thick,aoa_tab,cl_tab,cd_tab,cm_tab):
+def BEM(Vo,TSR,pitch,r,c,twist,thick,aoa_tab,cl_tab,cd_tab,cm_tab):
     a = 0
     aprime = 0
     convergenceFactor = 1e-10
@@ -132,11 +132,11 @@ def BEM(TSR,pitch,r,c,twist,thick,aoa_tab,cl_tab,cd_tab,cm_tab):
 R = 89.17 #m
 B = 3
 rho = 1.225 #kg/m3
-Vo = 10
 
 #Interpolate over r, tip speed ratio and pitch
-TSR = np.arange(5,10+1,1)
-pitch = np.arange(-3,4+1,1)
+Vo = [5,9,11,20]
+TSR = [8,8,8,4.56]
+pitch = [0,0,0,17.2]
 
 #Blade characteristics
 P_max = 0
@@ -144,34 +144,22 @@ Cp_max = 0
 TSR_max = 0
 pitch_max = 0
 
-Cp=np.zeros([len(TSR),len(pitch)])
-Ct=np.zeros([len(TSR),len(pitch)])
+Pn_lst=np.zeros([len(TSR),len(r_ref)])
+Pt_lst=np.zeros([len(TSR),len(r_ref)])
 
 for i in range(len(TSR)):
-    w = TSR[i]*Vo/R
-    for j in range(len(pitch)):
-        Pn_lst = []
-        Pt_lst = []
-        for k in range(len(r_ref)):
-            Pn, Pt = BEM(TSR[i],pitch[j],r_ref[k],c_ref[k],beta_ref[k],tc_ref[k],aoa_tab,cl_tab,cd_tab,cm_tab)
-            Pn_lst.append(Pn)
-            Pt_lst.append(Pt*r_ref[k])
+    w = TSR[i]*Vo[i]/R
 
-        T = np.trapz(Pn_lst,r_ref)*B
-        P = np.trapz(Pt_lst,r_ref)*w*B
+    for k in range(len(r_ref)):
+        Pn, Pt = BEM(Vo[i],TSR[i],pitch[i],r_ref[k],c_ref[k],beta_ref[k],tc_ref[k],aoa_tab,cl_tab,cd_tab,cm_tab)
+        Pn_lst[i][k] = Pn
+        Pt_lst[i][k] = Pt
 
-        Cp[i,j] = P/(0.5*rho*Vo**3*m.pi*R**2)
-        Ct[i,j] = T/(0.5*rho*Vo**2*m.pi*R**2)
 
-        if (Cp_max < Cp[i,j]):  
-            Cp_max = Cp[i,j]
-            P_max = P
-            TSR_max = TSR[i]
-            pitch_max = pitch[j]
-
-        print('Cp =',format(Cp[i,j],'.6f'), '\tTSR =',TSR[i], '\tpitch =', pitch[j])       
-print('\nBest values', '\nCp =', format(Cp_max,'.6f'), '\tPower(MW) =', round(P_max/1e6,3), '\tTSR =',TSR_max, '\tpitch =', pitch_max,'\n')
+for i in range(4):
+    for k in range(len(r_ref)):
+        print(Pn_lst[i][k],Pt_lst[i][k])
 
 #Plot the results in a countour plot
-contourplots(pitch, TSR, Cp, Ct)
-plt.show()
+# contourplots(pitch, TSR, Cp, Ct)
+# plt.show()
