@@ -22,7 +22,7 @@ AEO = P * H/1e3                                         #[kWh] Same power output
 
 print(H,'Hours lost \n',AEO,'kWH lost')
 
-plt.plot(V,h)
+plt.plot(V,h, color = 'grey')
 plt.title('Weibull probability density function')
 plt.xlabel(r'$V_0$')
 plt.ylabel(r'$h(V_0)$')

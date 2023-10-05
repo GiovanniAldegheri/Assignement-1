@@ -98,32 +98,25 @@ def BEM(TSR,pitch,r,c,twist,thick,aoa_tab,cl_tab,cd_tab,cm_tab):
         CT = ((1-a)**2*Cn*solidity)/m.sin(flowAngle)**2
 
         aold = a
-        aprimeOld  = aprime
 
-        if(aold > 0.33):
-                aStar = CT/(4*F*(1-1/4*(5-3*aold)*aold))
-                a = relax*aStar + (1-relax)*aold
-        elif(aold > 0.2):
-            K = 4*F*(m.sin(flowAngle))**2/(solidity*Cn)
-            a = 1+K/2*(1-2*0.2)-0.5*np.sqrt((K*(1-2*0.2)+2)**2+4*(K*0.2**2-1))  
+        if(aold < 0.33):
+            a = (solidity*Cn*(1-aold))/(4*F*m.sin(flowAngle)**2)
         else:
-            a = solidity*Cn/4/F/(m.sin(flowAngle))**2*(1-aold)
-            aprime = solidity*Ct/4/F/m.sin(flowAngle)/m.cos(flowAngle)*(1+aprimeOld)
-        
-            
+            aStar = CT/(4*F*(1-1/4*(5-3*aold)*aold))
+            a = relax*aStar + (1-relax)*aold
+
+        aprimeOld  = aprime
         aprimeStar = (solidity*Ct*(1+aprimeOld))/(4*F*m.sin(flowAngle)*m.cos(flowAngle))
         aprime = relax*aprimeStar + (1-relax)*aprimeOld
 
         delta = abs(aprime - aprimeOld)
         deltaPrime = abs(aprime - aprimeOld)
 
-    #Cp = (B*TSR*Ct*(1-a)**2/(2*m.pi*(m.sin(flowAngle))**2)*c/R)
     Vrel = m.sqrt(Vo**2+(w*r)**2)
 
     Pn = 0.5*rho*Vrel**2*c*Cn
     Pt = 0.5*rho*Vrel**2*c*Ct
-    if (m.isnan(Pt)|(m.isnan(Pn))):
-        Pt, Pn = 0,0
+
     return(Pn, Pt)
 
 #Constants______________
@@ -133,7 +126,7 @@ rho = 1.225 #kg/m3
 Vo = 10
 
 #Interpolate over r, tip speed ratio and pitch
-TSR = np.arange(5,10+1,1)
+TSR = np.arange(0,10+1,1)
 pitch = np.arange(-3,4+1,1)
 
 #Blade characteristics
@@ -172,4 +165,5 @@ print('\nBest values', '\nCp =', format(Cp_max,'.6f'), '\tPower(MW) =', round(P_
 
 #Plot the results in a countour plot
 contourplots(pitch, TSR, Cp, Ct)
-plt.show()
+# plt.show()
+
