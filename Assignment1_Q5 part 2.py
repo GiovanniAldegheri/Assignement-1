@@ -155,10 +155,14 @@ for i in range(len(TSR)):
         Pn_lst[i][k] = Pn
         Pt_lst[i][k] = Pt
 
-
+plt.figure()
 for i in range(4):
-    for k in range(len(r_ref)):
-        print(Pn_lst[i][k],Pt_lst[i][k])
+    plt.plot(r_ref,Pn_lst[i])
+plt.figure()
+for i in range(4):
+    plt.plot(r_ref,Pt_lst[i])
+
+plt.show()
 
 #Plot the results in a countour plot
 # contourplots(pitch, TSR, Cp, Ct)
