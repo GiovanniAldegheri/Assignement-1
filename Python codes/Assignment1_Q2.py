@@ -52,7 +52,7 @@ def force_coeffs(localalpha,thick,aoa_tab,cl_tab,cd_tab,cm_tab):
     Cl=np.interp (thick,thick_prof,cl_aoa[0,:])
     Cd=np.interp (thick,thick_prof,cd_aoa[0,:])
     Cm=np.interp (thick,thick_prof,cm_aoa[0,:])
-    return Cl, Cd, Cm 
+    return Cl, Cd, Cm
 
 def BEM(TSR,pitch,r,c,twist,thick,aoa_tab,cl_tab,cd_tab,cm_tab):
     a = 0
@@ -120,29 +120,29 @@ pitch_fixed = 0
 Cp_max = 0
 c_max = 0
 beta_max = 0
-beta = np.arange(-1.11-7,-1.11+3,0.5)
-c = np.arange(1,4,0.2)
+# beta = np.arange(-1.11-7,-1.11+3,0.5)
+c = np.arange(2,4,0.01)
 
-Cp=np.zeros([len(c),len(beta)])
+Cp=np.zeros(len(c))
 
 w = TSR*Vo/R
 
 for i in range(len(c)):
-    for j in range(len(beta)):
+    beta = np.interp(c[i], c_ref[::-1], beta_ref[::-1])
 
-        Cp[i, j] = BEM(TSR,pitch_fixed,r_ref[9],c[i],beta[j],tc_ref[9],aoa_tab,cl_tab,cd_tab,cm_tab)
-        if Cp[i, j] < 0:
-            Cp[i, j] = 0
+    Cp[i] = BEM(TSR,pitch_fixed,r_ref[9],c[i],beta,tc_ref[9],aoa_tab,cl_tab,cd_tab,cm_tab)
+    if Cp[i] < 0:
+        Cp[i] = 0
 
 
-        if (Cp_max < Cp[i,j]):  
-            Cp_max = Cp[i,j]
-            c_max = c[i]
-            beta_max = beta[j]
+    if (Cp_max < Cp[i]):  
+        Cp_max = Cp[i]
+        c_max = c[i]
+        beta_max = beta
 
-        print('Cp =',format(Cp[i, j],'.6f'), '\tc =',c[i], '\tbeta =', beta[j])
+    print('Cp =',format(Cp[i],'.6f'), '\tc =',c[i], '\tbeta =', beta)
 print('\nBest values', '\nCp =', format(Cp_max,'.6f'), '\tChord =', round(c_max,1), '\tTwist =', round(beta_max,2), '\n')
 
 #Plot the results in a countour plot
-contourplots(c, beta, Cp)
-plt.show()
+# contourplots(c, beta_ref, Cp)
+# plt.show()
