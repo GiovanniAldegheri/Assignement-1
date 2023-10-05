@@ -121,7 +121,7 @@ Cp_max = 0
 c_max = 0
 beta_max = 0
 # beta = np.arange(-1.11-7,-1.11+3,0.5)
-c = np.arange(2,4,0.01)
+c = np.arange(2,4,0.1)
 
 Cp=np.zeros(len(c))
 
@@ -143,6 +143,9 @@ for i in range(len(c)):
     print('Cp =',format(Cp[i],'.6f'), '\tc =',c[i], '\tbeta =', beta)
 print('\nBest values', '\nCp =', format(Cp_max,'.6f'), '\tChord =', round(c_max,1), '\tTwist =', round(beta_max,2), '\n')
 
+plt.figure()
+plt.plot(c,Cp)
+
 #Plot the results in a countour plot
 # contourplots(c, beta_ref, Cp)
-# plt.show()
+plt.show()
