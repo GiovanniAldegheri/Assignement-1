@@ -199,21 +199,43 @@ wind_speed = ['5m/s','9m/s','11m/s','20m/s']
 
 label = [(0, 0), (0, 1), (1, 0), (1, 1)]
 
-plt.figure()
+plt.figure(figsize=(12,10))
+plt.suptitle('Thrust comparison BEM / Ashes', size = 20)
+plt.subplots_adjust(left=0.1,
+                    bottom=0.1, 
+                    right=0.9, 
+                    top=0.9, 
+                    wspace=0.4, 
+                    hspace=0.4)
 for i in range(4):
     plt.subplot(2,2,i+1)
-    plt.title('Thrust ' + wind_speed[i])
+    plt.grid()
+    plt.xlabel('Radius [m]')
+    plt.ylabel('Thrust force [N]')
+    plt.title(wind_speed[i])
     plt.plot(r_ref,Pn_lst[i])
     plt.plot(r_lst,thrust_lst[i])
+plt.savefig('plots/thrust_Ashes.png')
 
-plt.figure()
+plt.figure(figsize=(12,10))
+plt.suptitle('Torque comparison BEM / Ashes', size = 20)
+plt.subplots_adjust(left=0.1,
+                    bottom=0.1, 
+                    right=0.9, 
+                    top=0.9, 
+                    wspace=0.4, 
+                    hspace=0.4)
 for i in range(4):
     plt.subplot(2,2,i+1)
-    plt.title('Torque ' + wind_speed[i])
+    plt.grid()
+    plt.xlabel('Radius [m]')
+    plt.ylabel('Torque force [N]')
+    plt.title(wind_speed[i])
     plt.plot(r_ref,Pt_lst[i])
     plt.plot(r_lst,torque_lst[i])
+plt.savefig('plots/torque_Ashes.png')
 
-plt.show()
+plt.close()
 
 #Plot the results in a countour plot
 # contourplots(pitch, TSR, Cp, Ct)

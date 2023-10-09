@@ -48,6 +48,7 @@ def simple_graph(x,y,x_label,y_label):
     plt.title((y_label + '(' + x_label + ')'))
     plt.xlabel(x_label)
     plt.ylabel(y_label)
+    plt.savefig('plots/'+y_label+'.png')
 
 
 def contourplots(x,y,a,x_label,y_label,a_label):
@@ -187,4 +188,4 @@ simple_graph(Vo, P_lst, 'Vo', 'Power')
 simple_graph(Vo, T_lst, 'Vo', 'Thrust')
 simple_graph(Vo, Cp_lst, 'Vo', 'Cp')
 simple_graph(Vo, Ct_lst, 'Vo', 'Ct')
-plt.show()
+plt.close()

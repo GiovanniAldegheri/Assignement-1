@@ -51,6 +51,8 @@ def contourplots(pitch, TSR, Cp, Ct):
     cbar2.set_label(r'$C_t$')
 
     plt.tight_layout()
+    plt.savefig('plots/Glauert.png')
+    plt.close()
 
 def force_coeffs(localalpha,thick,aoa_tab,cl_tab,cd_tab,cm_tab):
     cl_aoa=np.zeros([1,6])
@@ -126,7 +128,7 @@ rho = 1.225 #kg/m3
 Vo = 10
 
 #Interpolate over r, tip speed ratio and pitch
-TSR = np.arange(0,10+1,1)
+TSR = np.arange(5,10+1,1)
 pitch = np.arange(-3,4+1,1)
 
 #Blade characteristics

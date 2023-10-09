@@ -15,6 +15,10 @@ for i in range(len(TSR)):
     Cp_wilson_lst.append(Cp_wilson[i][1])
 
 plt.figure()
-plt.plot(TSR,Cp_glauert_lst)
-plt.plot(TSR,Cp_wilson_lst)
-plt.show()
+plt.plot(TSR,Cp_glauert_lst, label ='Glauert (pitch = 0)')
+plt.plot(TSR,Cp_wilson_lst, label = 'Wilson & Walker (pitch = -2)')
+plt.xlabel('TSR')
+plt.title('Cp comparison')
+plt.legend()
+plt.savefig('plots/glauert_wilson.png')
+plt.close()
