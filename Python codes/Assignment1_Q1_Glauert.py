@@ -27,6 +27,8 @@ c_ref = bladedat[2].tolist() #m
 beta_ref = bladedat[1].tolist() #deg
 tc_ref = bladedat[3].tolist() #%
 
+r_ref.pop()
+
 #Functions____________
 def contourplots(pitch, TSR, Cp, Ct):
     # Create a figure with two subplots
@@ -119,6 +121,9 @@ def BEM(TSR,pitch,r,c,twist,thick,aoa_tab,cl_tab,cd_tab,cm_tab):
     Pn = 0.5*rho*Vrel**2*c*Cn
     Pt = 0.5*rho*Vrel**2*c*Ct
 
+    if (m.isnan(Pt)|(m.isnan(Pn))):
+        Pt, Pn = 0,0
+
     return(Pn, Pt)
 
 #Constants______________
@@ -128,7 +133,11 @@ rho = 1.225 #kg/m3
 Vo = 10
 
 #Interpolate over r, tip speed ratio and pitch
-TSR = np.arange(5,10+1,1)
+if __name__ == "__main__":
+    TSR = np.arange(5,10+1,1)
+else:
+    TSR = np.arange(0,10+1,1)
+
 pitch = np.arange(-3,4+1,1)
 
 #Blade characteristics
@@ -166,6 +175,7 @@ for i in range(len(TSR)):
 print('\nBest values', '\nCp =', format(Cp_max,'.6f'), '\tPower(MW) =', round(P_max/1e6,3), '\tTSR =',TSR_max, '\tpitch =', pitch_max,'\n')
 
 #Plot the results in a countour plot
-contourplots(pitch, TSR, Cp, Ct)
+if __name__ == "__main__":
+    contourplots(pitch, TSR, Cp, Ct)
 # plt.show()
 

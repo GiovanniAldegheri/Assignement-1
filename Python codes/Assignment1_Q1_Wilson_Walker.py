@@ -137,7 +137,11 @@ rho = 1.225 #kg/m3
 Vo = 10
 
 #Interpolate over r, tip speed ratio and pitch
-TSR = np.arange(5,10+1,1)
+if __name__ == "__main__":
+    TSR = np.arange(5,10+1,1)
+else:
+    TSR = np.arange(0,10+1,1)
+
 pitch = np.arange(-3,4+1,1)
 
 #Blade characteristics
@@ -175,5 +179,6 @@ for i in range(len(TSR)):
 print('\nBest values', '\nCp =', format(Cp_max,'.6f'), '\tPower(MW) =', round(P_max/1e6,3), '\tTSR =',TSR_max, '\tpitch =', pitch_max,'\n')
 
 #Plot the results in a countour plot
-contourplots(pitch, TSR, Cp, Ct)
+if __name__ == "__main__":
+    contourplots(pitch, TSR, Cp, Ct)
 # plt.show()
