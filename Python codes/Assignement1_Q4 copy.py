@@ -44,8 +44,11 @@ r_ref.pop()
 
 def simple_graph(x,y,x_label,y_label):
     plt.figure()
+    plt.grid()
+    plt.xlim(4,25)
+    #plt.ylim(y_low,y_top)
     plt.plot(x, y)
-    plt.title((y_label + '(' + x_label + ')'))
+    #plt.title((y_label + '(' + x_label + ')'))
     plt.xlabel(x_label)
     plt.ylabel(y_label)
     plt.savefig('plots/'+y_label+'.png')
@@ -134,7 +137,7 @@ def BEM(Vo,TSR,pitch,r,c,twist,thick,aoa_tab,cl_tab,cd_tab,cm_tab):
 
 
 #Variables__________
-Vo = np.arange(5,25+1,1)
+Vo = np.arange(4,25+1,1)
 pitch = 0
 pitch_delta = 0.1
 
@@ -183,9 +186,9 @@ for i in range(len(Vo)):
 for i in range(len(Vo)):
     print('Vo(m/s) =', Vo[i], 'T(kN) =', int(T_lst[i]/1000), 'Pitch =', round(pitch_lst[i],1))
 
-simple_graph(Vo, pitch_lst, 'Vo', 'Pitch')
-simple_graph(Vo, P_lst, 'Vo', 'Power')
-simple_graph(Vo, T_lst, 'Vo', 'Thrust')
-simple_graph(Vo, Cp_lst, 'Vo', 'Cp')
-simple_graph(Vo, Ct_lst, 'Vo', 'Ct')
+simple_graph(Vo, pitch_lst, 'Vo (m/s)', 'Pitch (deg)')
+simple_graph(Vo, P_lst/1000, 'Vo (m/s)', 'Power (kW)')
+simple_graph(Vo, T_lst/1000, 'Vo (m/s)', 'Thrust (kN)')
+simple_graph(Vo, Cp_lst, 'Vo (m/s)', 'Cp')
+simple_graph(Vo, Ct_lst, 'Vo (m/s)', 'Ct')
 plt.close()
