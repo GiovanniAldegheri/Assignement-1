@@ -23,7 +23,7 @@ for i in range(len(Vo)):
     if Vo[i] > cut_out:
         w[i] = 0
     elif Vo[i] > Vo_rat:
-        w[i] = w[i-1]
+        w[i] = w_max
     elif Vo[i] < cut_in:
         w[i] = 0
 

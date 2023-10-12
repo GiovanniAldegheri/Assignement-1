@@ -42,13 +42,15 @@ r_ref.pop()
 
 #PLOTS
 
-def simple_graph(x,y,x_label,y_label):
+def simple_graph(x,y,ref,x_label,y_label):
     plt.figure()
     plt.grid()
     plt.xlim(4,25)
     #plt.ylim(y_low,y_top)
-    plt.plot(x, y)
+    plt.plot(x, y, label = 'BEM')
+    plt.plot(x, ref, label = 'DTU report')
     #plt.title((y_label + '(' + x_label + ')'))
+    plt.legend()
     plt.xlabel(x_label)
     plt.ylabel(y_label)
     plt.savefig('plots/'+y_label+'.png')
@@ -186,9 +188,16 @@ for i in range(len(Vo)):
 for i in range(len(Vo)):
     print('Vo(m/s) =', Vo[i], 'T(kN) =', int(T_lst[i]/1000), 'Pitch =', round(pitch_lst[i],1))
 
-simple_graph(Vo, pitch_lst, 'Vo (m/s)', 'Pitch (deg)')
-simple_graph(Vo, P_lst/1000, 'Vo (m/s)', 'Power (kW)')
-simple_graph(Vo, T_lst/1000, 'Vo (m/s)', 'Thrust (kN)')
-simple_graph(Vo, Cp_lst, 'Vo (m/s)', 'Cp')
-simple_graph(Vo, Ct_lst, 'Vo (m/s)', 'Ct')
+ref_pitch = [2.751, 1.966, 0.896, 0, 0, 0, 0, 0, 4.502, 7.266, 9.292, 10.958, 12.499, 13.896, 15.200, 16.432, 17.618, 18.758, 19.860, 20.927, 21.963, 22.975]
+ref_power = [280.2, 799.1, 1532.7, 2506.1, 3730.7, 5311.8, 7286.5, 9698.3, 10639.1, 10648.5, 10639.3, 10683.7, 10642.0, 10640.0, 10639.9, 10652.8, 10646.2, 10644.0, 10641.2, 10639.5, 10643.6, 10635.7]
+ref_thrust = [225.9, 351.5, 498.1, 643.4, 797.3, 1009.1, 1245.8, 1507.4, 1325.1, 1082.0, 967.9, 890.8, 824.8, 774.0, 732.5, 698.4, 668.1, 642.1, 619.5, 599.8, 582.7, 567.2]
+ref_cp = [0.286, 0.418, 0.464, 0.478, 0.476, 0.476, 0.476, 0.476, 0.423, 0.317, 0.253, 0.207, 0.170, 0.142, 0.119, 0.102, 0.087, 0.075, 0.065, 0.057, 0.050, 0.044]
+ref_ct = [0.923, 0.919, 0.904, 0.858, 0.814, 0.814, 0.814, 0.814, 0.602, 0.419, 0.323, 0.259, 0.211, 0.175, 0.148, 0.126, 0.109, 0.095, 0.084, 0.074, 0.066, 0.059]
+
+
+simple_graph(Vo, pitch_lst, ref_pitch, 'Vo (m/s)', 'Pitch (deg)')
+simple_graph(Vo, P_lst/1000, ref_power, 'Vo (m/s)', 'Power (kW)')
+simple_graph(Vo, T_lst/1000, ref_thrust, 'Vo (m/s)', 'Thrust (kN)')
+simple_graph(Vo, Cp_lst, ref_cp, 'Vo (m/s)', 'Cp')
+simple_graph(Vo, Ct_lst, ref_ct, 'Vo (m/s)', 'Ct')
 plt.close()
