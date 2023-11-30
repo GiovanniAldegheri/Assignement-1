@@ -28,6 +28,8 @@ for i in range(len(Vo)):
         w[i] = 0
 
 plt.plot(Vo, w)
-plt.xlabel('Vo(m/s)')
-plt.ylabel('w(rad/s)')
+plt.xlabel('Vo (m/s)')
+plt.ylabel('w (rad/s)')
+plt.xlim(0, 30)
+plt.grid()
 plt.show()

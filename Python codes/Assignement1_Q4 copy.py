@@ -159,11 +159,11 @@ for i in range(len(Vo)):
     TSR = w*R/Vo[i]
     P = P_max+1
     T = 0
-    pitch -= pitch_delta
+    pitch += pitch_delta
     print('Vo =',Vo[i], 'w =', w)
 
     while P > P_max and pitch < 90:
-        pitch += pitch_delta
+        pitch -= pitch_delta
         Pn_lst = []
         Pt_lst = []
 
