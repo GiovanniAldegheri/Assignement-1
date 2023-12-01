@@ -144,7 +144,10 @@ for i in range(len(c)):
 print('\nBest values', '\nCp =', format(Cp_max,'.6f'), '\tChord =', round(c_max,1), '\tTwist =', round(beta_max,2), '\n')
 
 plt.figure()
+plt.grid()
 plt.plot(c,Cp)
+plt.xlabel(r'$c$ (m)')
+plt.ylabel(r'$C_p$ (-)')
 
 #Plot the results in a countour plot
 # contourplots(c, beta_ref, Cp)

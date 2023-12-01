@@ -241,4 +241,4 @@ plt.close()
 
 #Plot the results in a countour plot
 # contourplots(pitch, TSR, Cp, Ct)
-# plt.show()
+plt.show()
